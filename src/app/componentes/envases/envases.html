@@ -1,1 +1,117 @@
-<p>envases works!</p>
+<h1 class="h3 mb-1"><i class="fa-solid fa-recycle me-2"></i>Envases retornables</h1>
+<p class="text-muted mb-4">Controla cuántas veces se reutiliza cada envase y cuándo debe salir de circulación.</p>
+
+<div class="row g-4">
+  <!-- Columna izquierda: registrar y buscar -->
+  <div class="col-lg-5">
+    <div class="card shadow-sm mb-4">
+      <div class="card-header fw-semibold"><i class="fa-solid fa-plus me-1"></i>Registrar envase</div>
+      <div class="card-body">
+        <form [formGroup]="registroForm" (ngSubmit)="registrar()" novalidate>
+          <div class="mb-3">
+            <label for="material" class="form-label">Material</label>
+            <select id="material" class="form-select" formControlName="material">
+              @for (m of materiales; track m) {
+                <option [value]="m">{{ m }}</option>
+              }
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="capacidadMl" class="form-label">Capacidad (ml)</label>
+            <input id="capacidadMl" type="number" class="form-control" formControlName="capacidadMl"
+                   [class.is-invalid]="registroForm.controls.capacidadMl.invalid && registroForm.controls.capacidadMl.touched" />
+            <div class="invalid-feedback">La capacidad debe ser mayor que cero.</div>
+          </div>
+          <div class="form-check form-switch mb-3">
+            <input id="retornableEnvase" class="form-check-input" type="checkbox" formControlName="retornable" />
+            <label for="retornableEnvase" class="form-check-label">Retornable</label>
+          </div>
+          <div class="d-grid">
+            <button type="submit" class="btn btn-success" [disabled]="registroForm.invalid || registrando()">
+              @if (registrando()) {
+                <span class="spinner-border spinner-border-sm me-2"></span>Registrando...
+              } @else {
+                Registrar envase
+              }
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="card shadow-sm">
+      <div class="card-header fw-semibold"><i class="fa-solid fa-magnifying-glass me-1"></i>Buscar envase por id</div>
+      <div class="card-body">
+        <form [formGroup]="busquedaForm" (ngSubmit)="buscar()" novalidate>
+          <div class="input-group">
+            <input type="text" class="form-control" formControlName="id"
+                   placeholder="e0000000-0000-0000-0000-000000000001"
+                   [class.is-invalid]="busquedaForm.controls.id.invalid && busquedaForm.controls.id.touched" />
+            <button type="submit" class="btn btn-outline-primary" [disabled]="busquedaForm.invalid || procesando()">
+              Buscar
+            </button>
+            <div class="invalid-feedback">Pega un id válido (36 caracteres).</div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Columna derecha: detalle y acciones -->
+  <div class="col-lg-7">
+    @if (envase(); as e) {
+      <div class="card shadow-sm h-100">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <span class="fw-semibold">{{ e.material }} · {{ e.capacidadMl }} ml</span>
+          <span class="badge {{ colorEstado(e.estado) }}">{{ e.estado }}</span>
+        </div>
+        <div class="card-body">
+          <p class="small text-muted mb-3">
+            Id: <code>{{ e.id }}</code>
+            <button type="button" class="btn btn-link btn-sm p-0 ms-2" (click)="copiarId()">
+              <i class="fa-regular fa-copy"></i>
+            </button>
+          </p>
+
+          @if (e.retornable) {
+            <div class="d-flex justify-content-between small mb-1">
+              <span>Usos: {{ e.cantidadUsos }}</span>
+              <span>Le quedan {{ e.usosRestantes }}</span>
+            </div>
+            <div class="progress mb-4" role="progressbar">
+              <div class="progress-bar"
+                   [class.bg-danger]="vidaUsada() >= 80"
+                   [style.width.%]="vidaUsada()">{{ vidaUsada() }}%</div>
+            </div>
+          } @else {
+            <div class="alert alert-secondary small">Este envase no es retornable: no se puede reutilizar.</div>
+          }
+
+          <div class="d-flex flex-wrap gap-2">
+            <button type="button" class="btn btn-success"
+                    [disabled]="procesando() || e.estado === 'DESCARTADO'" (click)="registrarRetorno()">
+              <i class="fa-solid fa-rotate-left me-1"></i>Registrar retorno
+            </button>
+            <button type="button" class="btn btn-warning"
+                    [disabled]="procesando() || e.estado === 'DESCARTADO'" (click)="marcarDanado()">
+              <i class="fa-solid fa-heart-crack me-1"></i>Marcar dañado
+            </button>
+            <button type="button" class="btn btn-outline-danger"
+                    [disabled]="procesando() || e.estado === 'DESCARTADO'" (click)="descartar()">
+              <i class="fa-solid fa-trash-can me-1"></i>Descartar
+            </button>
+          </div>
+          <p class="form-text mt-3 mb-0">
+            Las reglas las valida el backend: un envase dañado solo puede descartarse y
+            ninguno puede pasar del máximo de usos de su material.
+          </p>
+        </div>
+      </div>
+    } @else {
+      <div class="text-center text-muted py-5 border rounded-3 bg-white h-100">
+        <i class="fa-solid fa-bottle-water fa-3x mb-3"></i>
+        <p class="mb-0">Registra un envase o búscalo por su id para ver su ciclo de vida.</p>
+      </div>
+    }
+  </div>
+</div>
