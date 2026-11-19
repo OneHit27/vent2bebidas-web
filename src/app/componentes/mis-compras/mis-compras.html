@@ -1,1 +1,80 @@
-<p>mis-compras works!</p>
+<h1 class="h3 mb-4"><i class="fa-solid fa-receipt me-2"></i>Mis compras</h1>
+
+@if (perfil(); as p) {
+  <div class="card shadow-sm mb-4">
+    <div class="card-body d-flex flex-wrap gap-4 align-items-center">
+      <div>
+        <div class="text-muted small">Consumidor</div>
+        <div class="fw-semibold">{{ p.nombre }}</div>
+      </div>
+      <div>
+        <div class="text-muted small">Código</div>
+        <div class="fw-semibold">{{ p.codigo }}</div>
+      </div>
+      <div>
+        <div class="text-muted small">Edad</div>
+        @if (p.mayorDeEdad) {
+          <span class="badge bg-success">Mayor de edad</span>
+        } @else {
+          <span class="badge bg-warning text-dark">Menor de edad: sin alcohol</span>
+        }
+      </div>
+      <div>
+        <div class="text-muted small">Compras históricas</div>
+        <div class="fw-semibold">{{ p.comprasHistoricas }}</div>
+      </div>
+    </div>
+  </div>
+}
+
+@if (compras() === null) {
+  <div class="text-center py-5"><div class="spinner-border text-primary"></div></div>
+} @else if (lista().length === 0) {
+  <div class="text-center py-5 text-muted">
+    <i class="fa-solid fa-basket-shopping fa-3x mb-3"></i>
+    <p class="h5 mb-0">Todavía no tienes compras.</p>
+  </div>
+} @else {
+  <div class="table-responsive shadow-sm rounded-3">
+    <table class="table table-hover align-middle mb-0 bg-white">
+      <thead class="table-light">
+        <tr>
+          <th>Fecha</th>
+          <th>Bebida</th>
+          <th class="text-end">Unidades</th>
+          <th class="text-end">Precio unitario</th>
+          <th class="text-end">Total</th>
+          <th>Estado</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (compra of lista(); track compra.id) {
+          <tr>
+            <td class="small">{{ compra.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td>{{ nombreDe(compra.bebidaId) }}</td>
+            <td class="text-end">{{ compra.unidades }}</td>
+            <td class="text-end">{{ compra.precioUnitario | number:'1.0-0' }}</td>
+            <td class="text-end fw-semibold">{{ compra.total | number:'1.0-0' }} {{ compra.moneda }}</td>
+            <td>
+              <span class="badge"
+                    [class.bg-success]="compra.estado === 'CONFIRMADA'"
+                    [class.bg-secondary]="compra.estado === 'CANCELADA'">
+                {{ compra.estado }}
+              </span>
+            </td>
+            <td class="text-end">
+              @if (compra.estado === 'CONFIRMADA') {
+                <button type="button" class="btn btn-sm btn-outline-danger"
+                        [disabled]="cancelando() === compra.id" (click)="cancelar(compra)">
+                  Cancelar
+                </button>
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  <p class="form-text mt-2">Una compra solo se puede cancelar durante las 24 horas siguientes.</p>
+}
