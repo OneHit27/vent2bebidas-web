@@ -1,12 +1,13 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { Header } from './componentes/header/header';
+import { Footer } from './componentes/footer/footer';
+import { Notificaciones } from './componentes/notificaciones/notificaciones';
 
 @Component({
-  imports: [RouterOutlet],
   selector: 'app-root',
-  styleUrl: './app.css',
+  imports: [RouterOutlet, Header, Footer, Notificaciones],
   templateUrl: './app.html',
+  styleUrl: './app.css'
 })
-export class App {
-  protected readonly title = signal('vent2bebidas-web');
-}
+export class App {}
