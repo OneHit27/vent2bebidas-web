@@ -1,1 +1,12 @@
-/* You can add global styles to this file, and also import other style files */
+/* Estilos globales de Vent2Bebidas */
+body {
+  background-color: #f5f6f8;
+}
+
+main {
+  min-height: 75vh;
+}
+
+.card {
+  border-radius: 0.75rem;
+}
