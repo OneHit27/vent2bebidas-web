@@ -1,1 +1,71 @@
-<p>comprar works!</p>
+<div class="row justify-content-center">
+  <div class="col-md-8 col-lg-6">
+    <a routerLink="/catalogo" class="btn btn-link px-0 mb-2">
+      <i class="fa-solid fa-arrow-left me-1"></i>Volver al catálogo
+    </a>
+
+    <div class="card shadow-sm">
+      <div class="card-header py-3">
+        <h1 class="h5 mb-0"><i class="fa-solid fa-cart-shopping me-2"></i>Comprar bebida</h1>
+      </div>
+
+      <div class="card-body p-4">
+        @if (noEncontrada()) {
+          <div class="alert alert-warning mb-0">
+            <i class="fa-solid fa-triangle-exclamation me-1"></i>
+            Esta bebida no existe o ya no está disponible.
+          </div>
+        } @else if (!bebida()) {
+          <div class="text-center py-4"><div class="spinner-border text-primary"></div></div>
+        } @else {
+          <div class="mb-4">
+            <h2 class="h4 mb-1">{{ bebida()?.nombre }}</h2>
+            <p class="text-muted mb-0">
+              {{ bebida()?.monto | number:'1.0-0' }} {{ bebida()?.moneda }} por unidad ·
+              {{ bebida()?.material }} {{ bebida()?.capacidadMl }} ml
+            </p>
+          </div>
+
+          <form [formGroup]="compraForm" (ngSubmit)="onSubmit()" novalidate>
+            <div class="mb-3">
+              <label for="bebidaId" class="form-label">Código de la bebida</label>
+              <input id="bebidaId" type="text" class="form-control form-control-sm text-muted"
+                     formControlName="bebidaId" readonly />
+            </div>
+
+            <div class="mb-3">
+              <label for="unidades" class="form-label">Unidades</label>
+              <input id="unidades" type="number" min="1" [max]="maxUnidades" class="form-control"
+                     formControlName="unidades"
+                     [class.is-invalid]="unidadesCtrl.invalid && unidadesCtrl.touched" />
+              @if (unidadesCtrl.hasError('required')) {
+                <div class="invalid-feedback">Escribe cuántas unidades quieres.</div>
+              } @else if (unidadesCtrl.hasError('min')) {
+                <div class="invalid-feedback">Debes comprar al menos una unidad.</div>
+              } @else if (unidadesCtrl.hasError('max')) {
+                <div class="invalid-feedback">Máximo {{ maxUnidades }} unidades por compra.</div>
+              }
+              <div class="form-text">Más de 5 unidades exige tener más de 3 compras anteriores.</div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center border-top pt-3 mb-3">
+              <span class="text-muted">Total a pagar</span>
+              <span class="h4 mb-0">{{ total() | number:'1.0-0' }} {{ bebida()?.moneda }}</span>
+            </div>
+
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary"
+                      [disabled]="compraForm.invalid || isLoading()">
+                @if (isLoading()) {
+                  <span class="spinner-border spinner-border-sm me-2"></span>Procesando...
+                } @else {
+                  <i class="fa-solid fa-check me-2"></i>Confirmar compra
+                }
+              </button>
+            </div>
+          </form>
+        }
+      </div>
+    </div>
+  </div>
+</div>
