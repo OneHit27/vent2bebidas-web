@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { Bebida, GrupoAlcoholico } from '../modelos/bebidas';
+import { Bebida, GrupoAlcoholico, RegistrarBebidaRequest } from '../modelos/bebidas';
 import { Pagina } from '../modelos/pagina';
 
 // Un servicio por grupo de endpoints: todo lo de /api/bebidas pasa por aquí
@@ -26,6 +26,11 @@ export class BebidasService {
   // GET /api/bebidas/{id}
   obtener(id: string) {
     return this.http.get<Bebida>(`${this.url}/${id}`);
+  }
+
+  // POST /api/bebidas (VENDEDOR). El vendedor sale del token, no del cuerpo.
+  registrar(solicitud: RegistrarBebidaRequest) {
+    return this.http.post<Bebida>(this.url, solicitud);
   }
 
   // DELETE /api/bebidas/{id} (VENDEDOR dueño). Borrado lógico en el backend.
