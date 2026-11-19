@@ -1,1 +1,78 @@
-<p>publicar-bebida works!</p>
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="card shadow-sm">
+      <div class="card-header py-3">
+        <h1 class="h5 mb-0"><i class="fa-solid fa-circle-plus me-2"></i>Publicar una bebida</h1>
+      </div>
+      <div class="card-body p-4">
+        <form [formGroup]="bebidaForm" (ngSubmit)="onSubmit()" novalidate>
+          <div class="row g-3">
+
+            <div class="col-12">
+              <label for="nombre" class="form-label">Nombre</label>
+              <input id="nombre" type="text" class="form-control" formControlName="nombre"
+                     [class.is-invalid]="invalido('nombre')" placeholder="Ej: Cerveza Ámbar Artesanal" />
+              <div class="invalid-feedback">El nombre es obligatorio (mínimo 3 letras).</div>
+            </div>
+
+            <div class="col-md-6">
+              <label for="material" class="form-label">Material del envase</label>
+              <select id="material" class="form-select" formControlName="material">
+                @for (m of materiales; track m) {
+                  <option [value]="m">{{ m }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label for="capacidadMl" class="form-label">Capacidad (ml)</label>
+              <input id="capacidadMl" type="number" class="form-control" formControlName="capacidadMl"
+                     [class.is-invalid]="invalido('capacidadMl')" />
+              <div class="invalid-feedback">La capacidad debe ser mayor que cero.</div>
+            </div>
+
+            <div class="col-md-6">
+              <label for="grupoAlcoholico" class="form-label">Grupo alcohólico</label>
+              <select id="grupoAlcoholico" class="form-select" formControlName="grupoAlcoholico">
+                @for (g of grupos; track g.valor) {
+                  <option [value]="g.valor">{{ g.texto }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="col-md-6 d-flex align-items-end">
+              <div class="form-check form-switch mb-2">
+                <input id="retornable" class="form-check-input" type="checkbox" formControlName="retornable" />
+                <label for="retornable" class="form-check-label">Envase retornable</label>
+              </div>
+            </div>
+
+            <div class="col-md-8">
+              <label for="monto" class="form-label">Precio</label>
+              <input id="monto" type="number" class="form-control" formControlName="monto"
+                     [class.is-invalid]="invalido('monto')" />
+              <div class="invalid-feedback">El precio debe ser mayor que cero.</div>
+            </div>
+
+            <div class="col-md-4">
+              <label for="moneda" class="form-label">Moneda</label>
+              <input id="moneda" type="text" class="form-control text-uppercase" formControlName="moneda"
+                     [class.is-invalid]="invalido('moneda')" maxlength="3" />
+              <div class="invalid-feedback">Usa 3 letras mayúsculas, por ejemplo COP.</div>
+            </div>
+
+            <div class="col-12 d-grid">
+              <button type="submit" class="btn btn-success" [disabled]="isLoading()">
+                @if (isLoading()) {
+                  <span class="spinner-border spinner-border-sm me-2"></span>Publicando...
+                } @else {
+                  <i class="fa-solid fa-upload me-2"></i>Publicar bebida
+                }
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
