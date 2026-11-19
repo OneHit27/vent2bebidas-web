@@ -1,1 +1,94 @@
-<p>catalogo works!</p>
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+  <h1 class="h3 mb-0"><i class="fa-solid fa-store me-2"></i>Catálogo de bebidas</h1>
+  <span class="text-muted small">{{ total() }} bebidas disponibles</span>
+</div>
+
+<!-- Búsqueda reactiva y filtro por grupo -->
+<div class="row g-2 mb-4">
+  <div class="col-md-8">
+    <div class="input-group">
+      <span class="input-group-text"><i class="fa-solid fa-magnifying-glass"></i></span>
+      <input #caja type="search" class="form-control"
+             placeholder="Escribe para buscar por nombre, por ejemplo: cerveza"
+             (input)="escribir(caja.value)" />
+    </div>
+  </div>
+  <div class="col-md-4">
+    <select #filtro class="form-select" (change)="filtrarGrupo(filtro.value)">
+      @for (g of grupos; track g.valor) {
+        <option [value]="g.valor">{{ g.texto }}</option>
+      }
+    </select>
+  </div>
+</div>
+
+@if (respuesta() === null) {
+  <div class="text-center py-5">
+    <div class="spinner-border text-primary" role="status"></div>
+  </div>
+} @else if (bebidas().length === 0) {
+  <div class="text-center py-5 text-muted">
+    <i class="fa-solid fa-box-open fa-3x mb-3"></i>
+    <p class="h5">No encontramos bebidas con esa búsqueda.</p>
+    <p class="small mb-0">Prueba con otra palabra o quita el filtro.</p>
+  </div>
+} @else {
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3">
+    @for (bebida of bebidas(); track bebida.id) {
+      <div class="col">
+        <div class="card h-100 shadow-sm bebida-card">
+          <div class="card-header d-flex justify-content-between align-items-center gap-2">
+            <span class="fw-semibold">{{ bebida.nombre }}</span>
+            <span class="badge {{ colorGrupo(bebida.grupoAlcoholico) }}">
+              {{ textoGrupo(bebida.grupoAlcoholico) }}
+            </span>
+          </div>
+          <div class="card-body">
+            <p class="h4 mb-3">
+              {{ bebida.monto | number:'1.0-0' }}
+              <small class="text-muted fs-6">{{ bebida.moneda }}</small>
+            </p>
+            <ul class="list-unstyled small mb-0">
+              <li class="mb-1">
+                <i class="fa-solid fa-flask me-2"></i>{{ bebida.material }} · {{ bebida.capacidadMl }} ml
+              </li>
+              <li>
+                @if (bebida.retornable) {
+                  <i class="fa-solid fa-recycle text-success me-2"></i>Envase retornable
+                } @else {
+                  <i class="fa-solid fa-trash-can text-secondary me-2"></i>Envase no retornable
+                }
+              </li>
+            </ul>
+          </div>
+          <div class="card-footer bg-transparent text-end">
+            @if (esComprador()) {
+              <a [routerLink]="['/comprar', bebida.id]" class="btn btn-sm btn-primary">
+                <i class="fa-solid fa-cart-shopping me-1"></i>Comprar
+              </a>
+            } @else if (esMia(bebida)) {
+              <button type="button" class="btn btn-sm btn-outline-danger" (click)="retirar(bebida)">
+                <i class="fa-solid fa-ban me-1"></i>Retirar
+              </button>
+            } @else {
+              <span class="small text-muted">Publicada por otro vendedor</span>
+            }
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Paginación: la página la calcula el backend -->
+  <div class="d-flex justify-content-center align-items-center gap-3 mt-4">
+    <button class="btn btn-outline-primary btn-sm" type="button"
+            (click)="anterior()" [disabled]="esPrimera()">
+      <i class="fa-solid fa-chevron-left me-1"></i>Anterior
+    </button>
+    <span class="text-muted small">Página {{ pagina() + 1 }} de {{ totalPaginas() }}</span>
+    <button class="btn btn-outline-primary btn-sm" type="button"
+            (click)="siguiente()" [disabled]="esUltima()">
+      Siguiente<i class="fa-solid fa-chevron-right ms-1"></i>
+    </button>
+  </div>
+}
