@@ -1,59 +1,79 @@
-# Vent2bebidasWeb
+# Vent2Bebidas · Frontend (Angular)
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.2.7.
+Marketplace B2B de **bebidas con envases retornables**. Los vendedores publican sus bebidas y
+controlan el ciclo de vida de cada envase; los compradores buscan, compran y pueden cancelar
+una compra durante 24 horas.
 
-## Development server
+Programación Avanzada 2026-2 · Universidad del Quindío · **Entrega 3: frontend conectado al backend**
 
-To start a local development server, run:
+- Backend (Entrega 2): https://github.com/JorgeLuisOcampo/vent2bebidas.git
+- Frontend (este repositorio): https://github.com/OneHit27/vent2bebidas-web.git
+
+## Integrantes
+
+| Integrantes | 
+|---|
+| Juan David Torres Arango |
+| Jorge Luis Ocampo Ocampo |
+| Oscar Leandro Agudelo Franco |
+
+## Cómo ejecutar
+
+**1. Backend** (Java 21, desde el repositorio del backend):
 
 ```bash
+cd backend
+./gradlew bootRun       
+```
+
+Queda en http://localhost:8080 (Swagger en http://localhost:8080/swagger-ui.html).
+
+**2. Frontend** (Node 22 o 24 y Angular CLI 22):
+
+```bash
+npm install
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Abrir http://localhost:4200. La URL de la API está en `src/environments/environment.development.ts`.
 
-## Code scaffolding
+## Usuarios de prueba
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+| Correo | Contraseña | Rol | Para qué sirve |
+|---|---|---|---|
+| cerveceria@vent2bebidas.com | Vendedor123* | VENDEDOR | Dueño de las cervezas, la malta y el jugo |
+| licores@vent2bebidas.com | Vendedor123* | VENDEDOR | Dueño del aguardiente y el ron |
+| ana@vent2bebidas.com | Comprador123* | COMPRADOR | Mayor de edad con 5 compras: puede comprar más de 5 unidades |
+| carlos@vent2bebidas.com | Comprador123* | COMPRADOR | Si pide más de 5 unidades rompe la regla de volumen (422) |
+| sofia@vent2bebidas.com | Comprador123* | COMPRADOR | Menor de edad: si compra alcohol el backend responde 422 |
 
-```bash
-ng generate component component-name
-```
+Envases de prueba (pantalla **Envases**): `e0000000-0000-0000-0000-000000000001` (nuevo),
+`...0002` (plástico en su máximo de usos), `...0003` (dañado), `...0004` (aluminio), `...0005` (descartado).
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Pantallas
 
-```bash
-ng generate --help
-```
+| Pantalla | Ruta | Acceso |
+|---|---|---|
+| Inicio | `/` | Público |
+| Iniciar sesión | `/login` | Solo sin sesión (`guestGuard`) |
+| Catálogo paginado con búsqueda y filtro | `/catalogo` | Con sesión (`authGuard`) |
+| Comprar bebida | `/comprar/:id` | COMPRADOR (`rolGuard`) |
+| Mis compras (historial, perfil y cancelación) | `/mis-compras` | COMPRADOR |
+| Publicar bebida | `/publicar` | VENDEDOR |
+| Envases retornables (funcionalidad propia) | `/envases` | VENDEDOR |
+| Ranking de bebidas más vendidas | `/ranking` | VENDEDOR |
 
-## Building
+## Cómo está hecho
 
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- **Interfaces espejo** de los DTOs del backend en `src/app/modelos`.
+- **Un servicio por grupo de endpoints** en `src/app/servicios` (`AuthService`, `BebidasService`, `ComprasService`,
+  `ConsumidoresService`, `EnvasesService`, `ReportesService`). Ningún componente escribe la URL de la API.
+- **Interceptor** (`interceptores/auth-interceptor.ts`): agrega `Authorization: Bearer <token>` y, ante un 401,
+  cierra la sesión, avisa y redirige al login.
+- **Guards**: `authGuard`, `guestGuard` y `rolGuard`. Son una comodidad para el usuario; la seguridad real la
+  aplica el backend (Spring Security con JWT).
+- **Catálogo**: la paginación (`pagina`, `tamano`) y la búsqueda (`texto`, `grupo`) las resuelve el backend.
+  La búsqueda es reactiva con Signals y espera 400 ms (debounce) antes de consultar.
+- **Avisos**: `NotificacionesService` + componente `Notificaciones`, que desaparecen solos a los 4 segundos.
+- **Errores HTTP** traducidos en `utilidades/errores.ts` (400, 401, 403, 404, 409, 422).
+- **Bootstrap 5** y **Font Awesome** instalados por npm y registrados en `angular.json`.
