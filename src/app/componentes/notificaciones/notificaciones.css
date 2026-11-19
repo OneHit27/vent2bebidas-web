@@ -1,0 +1,8 @@
+.avisos {
+  z-index: 1080;
+  max-width: 380px;
+}
+
+.alert {
+  cursor: pointer;
+}

@@ -1,0 +1,16 @@
+<div class="avisos position-fixed top-0 end-0 p-3">
+  @for (aviso of servicio.avisos(); track aviso.id) {
+    <div class="alert shadow-sm mb-2 d-flex align-items-center gap-2"
+         [class.alert-success]="aviso.tipo === 'exito'"
+         [class.alert-danger]="aviso.tipo === 'error'"
+         [class.alert-info]="aviso.tipo === 'info'"
+         role="alert"
+         (click)="servicio.quitar(aviso.id)">
+      <i class="fa-solid"
+         [class.fa-circle-check]="aviso.tipo === 'exito'"
+         [class.fa-circle-exclamation]="aviso.tipo === 'error'"
+         [class.fa-circle-info]="aviso.tipo === 'info'"></i>
+      <span>{{ aviso.texto }}</span>
+    </div>
+  }
+</div>
