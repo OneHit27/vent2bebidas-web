@@ -1,0 +1,57 @@
+<nav class="navbar navbar-expand-lg bg-dark shadow-sm" data-bs-theme="dark">
+  <div class="container">
+    <a routerLink="/" class="navbar-brand d-flex align-items-center gap-2">
+      <i class="fa-solid fa-wine-bottle text-warning"></i>
+      <span class="fw-semibold">Vent2Bebidas</span>
+    </a>
+
+    <!-- En pantallas pequeñas el menú se convierte en hamburguesa -->
+    <button class="navbar-toggler" type="button"
+            data-bs-toggle="collapse" data-bs-target="#menuPrincipal"
+            aria-controls="menuPrincipal" aria-expanded="false" aria-label="Abrir menú">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="menuPrincipal">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a routerLink="/" routerLinkActive="active"
+             [routerLinkActiveOptions]="{ exact: true }" class="nav-link">
+            <i class="fa-solid fa-house me-1"></i>Inicio
+          </a>
+        </li>
+
+        @if (isLoggedIn()) {
+          <li class="nav-item">
+            <a routerLink="/catalogo" routerLinkActive="active" class="nav-link">
+              <i class="fa-solid fa-store me-1"></i>Catálogo
+            </a>
+          </li>
+
+          @if (esComprador()) {
+            <!-- OPCIONES DEL COMPRADOR -->
+          }
+
+          @if (esVendedor()) {
+            <!-- OPCIONES DEL VENDEDOR -->
+          }
+        }
+      </ul>
+
+      <div class="d-flex flex-column flex-lg-row align-items-lg-center gap-2">
+        @if (isLoggedIn()) {
+          <span class="navbar-text small">
+            <i class="fa-solid fa-user me-1"></i>{{ email() }}
+          </span>
+          <button type="button" class="btn btn-outline-light btn-sm" (click)="cerrarSesion()">
+            <i class="fa-solid fa-right-from-bracket me-1"></i>Cerrar sesión
+          </button>
+        } @else {
+          <a routerLink="/login" class="btn btn-warning btn-sm">
+            <i class="fa-solid fa-right-to-bracket me-1"></i>Iniciar sesión
+          </a>
+        }
+      </div>
+    </div>
+  </div>
+</nav>
