@@ -1,0 +1,45 @@
+<section class="hero rounded-4 p-4 p-md-5 mb-4 text-white">
+  <h1 class="display-6 fw-bold">
+    <i class="fa-solid fa-wine-bottle me-2"></i>Vent2Bebidas
+  </h1>
+  <p class="lead mb-4">
+    El marketplace B2B de bebidas con envases retornables: los vendedores publican,
+    los compradores compran y cada envase se controla durante toda su vida útil.
+  </p>
+  @if (isLoggedIn()) {
+    <a routerLink="/catalogo" class="btn btn-warning btn-lg">
+      <i class="fa-solid fa-store me-2"></i>Ir al catálogo
+    </a>
+  } @else {
+    <a routerLink="/login" class="btn btn-warning btn-lg">
+      <i class="fa-solid fa-right-to-bracket me-2"></i>Iniciar sesión
+    </a>
+  }
+</section>
+
+<div class="row row-cols-1 row-cols-md-3 g-3">
+  <div class="col">
+    <div class="card h-100 shadow-sm">
+      <div class="card-body">
+        <h2 class="h5"><i class="fa-solid fa-store text-primary me-2"></i>Catálogo</h2>
+        <p class="mb-0 text-muted">Busca bebidas por nombre y por grupo alcohólico, con paginación desde el servidor.</p>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card h-100 shadow-sm">
+      <div class="card-body">
+        <h2 class="h5"><i class="fa-solid fa-recycle text-success me-2"></i>Envases retornables</h2>
+        <p class="mb-0 text-muted">El vendedor registra cada retorno y sabe cuántos usos le quedan a cada envase.</p>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card h-100 shadow-sm">
+      <div class="card-body">
+        <h2 class="h5"><i class="fa-solid fa-shield-halved text-warning me-2"></i>Compra responsable</h2>
+        <p class="mb-0 text-muted">Los menores de edad no pueden comprar alcohol y las compras se pueden cancelar durante 24 horas.</p>
+      </div>
+    </div>
+  </div>
+</div>
