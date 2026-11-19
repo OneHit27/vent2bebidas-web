@@ -12,4 +12,14 @@ export class ComprasService {
   comprar(solicitud: ConfirmarCompraRequest) {
     return this.http.post<Compra>(this.url, solicitud);
   }
+
+  // GET /api/compras/mias (COMPRADOR): de la más reciente a la más antigua
+  mias() {
+    return this.http.get<Compra[]>(`${this.url}/mias`);
+  }
+
+  // PUT /api/compras/{id}/cancelar (COMPRADOR dueño, máximo 24 horas después)
+  cancelar(id: string) {
+    return this.http.put<Compra>(`${this.url}/${id}/cancelar`, {});
+  }
 }
